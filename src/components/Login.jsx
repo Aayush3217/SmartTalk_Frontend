@@ -16,6 +16,7 @@ export default function Login({ onAuthSuccess }) {
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [about, setAbout] = useState('Hey there! I am using WhatsApp.');
+  const [password, setPassword] = useState('');
   
   const [step, setStep] = useState(1); // 1: Send OTP, 2: Verify OTP
   const [loading, setLoading] = useState(false);
@@ -91,8 +92,8 @@ export default function Login({ onAuthSuccess }) {
 
   const handleManualSubmit = async (e) => {
     e.preventDefault();
-    if (!username.trim() || !email.trim()) {
-      setError('Name and Email are required');
+    if (!email.trim() || !password.trim()) {
+      setError('Email and Password are required');
       return;
     }
     setLoading(true);
@@ -103,6 +104,7 @@ export default function Login({ onAuthSuccess }) {
       const formData = new FormData();
       formData.append('username', username.trim());
       formData.append('email', email.trim());
+      formData.append('password', password.trim());
       formData.append('preferredLanguage', preferredLanguage);
       formData.append('about', about);
       if (imageFile) {
@@ -330,6 +332,22 @@ export default function Login({ onAuthSuccess }) {
                   placeholder="name@domain.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-600 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                />
+              </div>
+            </div>
+            
+            {/* Password Input */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Password</label>
+              <div className="relative flex items-center">
+                <Lock className="absolute left-3.5 text-slate-500 w-4 h-4" />
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-600 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
                 />
