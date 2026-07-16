@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  MessageSquare, CircleDot, LogOut, Search, User, Sparkles, Shield, ChevronRight, Edit2 
+  MessageSquare, CircleDot, LogOut, Search, User, Sparkles, Shield, ChevronRight, Edit2, Users 
 } from 'lucide-react';
 
 export default function MainLayout({ 
@@ -13,6 +13,7 @@ export default function MainLayout({
   onOpenStatus,
   onEditProfile,
   onLogout,
+  onOpenCreateGroup,
   children 
 }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,15 +31,19 @@ export default function MainLayout({
 
   // Filter conversations based on search
   const filteredConversations = conversations.filter(c => {
+    if (c.isGroup) {
+      return c.groupName?.toLowerCase().includes(searchQuery.toLowerCase());
+    }
     const receiver = c.participants.find(p => p._id !== currentUser._id);
     return receiver?.username?.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   // Filter users from directory who are NOT in conversations already, matching query
   const existingChatUserIds = conversations.map(c => {
+    if (c.isGroup) return null;
     const receiver = c.participants.find(p => p._id !== currentUser._id);
     return receiver?._id;
-  });
+  }).filter(Boolean);
 
   const searchInDirectory = users.filter(u => {
     const matchesSearch = searchQuery.trim() === '' || u.username?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -66,6 +71,9 @@ export default function MainLayout({
             </div>
             
             <div className="flex gap-1.5">
+              <button onClick={onOpenCreateGroup} title="Create Group Chat" className="p-2 text-slate-400 hover:text-emerald-500 hover:bg-slate-800 rounded-full transition-all cursor-pointer">
+                <Users className="w-5 h-5" />
+              </button>
               <button onClick={onOpenStatus} title="View Stories" className="p-2 text-slate-400 hover:text-emerald-500 hover:bg-slate-800 rounded-full transition-all cursor-pointer">
                 <CircleDot className="w-5 h-5" />
               </button>
@@ -87,7 +95,7 @@ export default function MainLayout({
                 placeholder="Search or start new chat..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 bg-transparent border-none py-1 px-2.5 text-sm text-slate-105 placeholder-slate-600 outline-none"
+                className="flex-1 bg-transparent border-none py-1 px-2.5 text-sm text-slate-105 placeholder-slate-605 outline-none"
               />
             </div>
           </div>
@@ -95,10 +103,10 @@ export default function MainLayout({
           {/* Contact & Conversations list */}
           <div className="flex-1 overflow-y-auto">
             {filteredConversations.length === 0 && searchInDirectory.length === 0 ? (
-              <div className="flex flex-col items-center text-center p-12 gap-3 text-slate-400">
-                <MessageSquare className="w-8 h-8 text-slate-600" />
+              <div className="flex flex-col items-center text-center p-12 gap-3 text-slate-450">
+                <MessageSquare className="w-8 h-8 text-slate-650" />
                 <p className="text-sm font-semibold">No users found</p>
-                <span className="text-xs text-slate-500">Ensure other users are registered in the database.</span>
+                <span className="text-xs text-slate-550">Ensure other users are registered in the database.</span>
               </div>
             ) : (
               <>
@@ -117,22 +125,32 @@ export default function MainLayout({
                       onClick={() => onSelectConversation(c)}
                     >
                       <div className="relative">
-                        {receiver?.profilePicture ? (
+                        {c.isGroup ? (
+                          c.groupAvatar ? (
+                            <img src={c.groupAvatar} alt="" className="w-12 h-12 rounded-full object-cover border border-slate-800" />
+                          ) : (
+                            <div className="w-12 h-12 rounded-full bg-slate-800 text-emerald-500 font-bold text-lg flex items-center justify-center border border-slate-800">
+                              <Users className="w-5 h-5 text-emerald-550" />
+                            </div>
+                          )
+                        ) : receiver?.profilePicture ? (
                           <img src={receiver.profilePicture} alt="" className="w-12 h-12 rounded-full object-cover" />
                         ) : (
-                          <div className="w-12 h-12 rounded-full bg-slate-800 text-emerald-500 font-bold text-lg flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-full bg-slate-800 text-emerald-550 font-bold text-lg flex items-center justify-center">
                             {receiver?.username?.charAt(0).toUpperCase() || 'U'}
                           </div>
                         )}
-                        {receiver?.isOnline && (
+                        {!c.isGroup && receiver?.isOnline && (
                           <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-slate-900" />
                         )}
                       </div>
 
                       <div className="flex-1 flex flex-col gap-1">
                         <div className="flex justify-between items-center">
-                          <span className="font-semibold text-sm text-slate-100">{receiver?.username || 'Unknown User'}</span>
-                          <span className="text-xxs text-slate-500">{formatMsgTime(c.updatedAt)}</span>
+                          <span className="font-semibold text-sm text-slate-100">
+                            {c.isGroup ? c.groupName : (receiver?.username || 'Unknown User')}
+                          </span>
+                          <span className="text-xxs text-slate-505">{formatMsgTime(c.updatedAt)}</span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-xs text-slate-400 truncate max-w-[180px]">
@@ -141,7 +159,7 @@ export default function MainLayout({
                               lastMsg.contentType === 'video' ? '🎥 Video' :
                               lastMsg.content
                             ) : (
-                              <span className="italic text-slate-500">No messages yet</span>
+                              <span className="italic text-slate-550">No messages yet</span>
                             )}
                           </span>
                           {c.unreadCount > 0 && !isChatActive && (
@@ -186,7 +204,7 @@ export default function MainLayout({
                         <div className="flex-1 flex flex-col gap-1">
                           <div className="flex justify-between items-center">
                             <span className="font-semibold text-sm text-slate-100">{u.username}</span>
-                            <ChevronRight className="w-4 h-4 text-slate-500" />
+                            <ChevronRight className="w-4 h-4 text-slate-550" />
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-xs text-slate-550 truncate max-w-[185px]">

@@ -7,6 +7,7 @@ import ProfileSetup from './components/ProfileSetup';
 import MainLayout from './components/MainLayout';
 import ChatWindow from './components/ChatWindow';
 import StatusArea from './components/StatusArea';
+import CreateGroupModal from './components/CreateGroupModal';
 
 const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/\/$/, '');
 const API_BASE = `${BACKEND_URL}/api`;
@@ -25,6 +26,7 @@ export default function App() {
   
   // Tab control
   const [activeView, setActiveView] = useState('chats'); // 'chats' | 'status' | 'profile-edit'
+  const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
 
   // 1. Initial auth check
   useEffect(() => {
@@ -100,6 +102,15 @@ export default function App() {
 
     socketService.on('message_status_update', () => {
       syncDirectoryAndConversations();
+    });
+
+    socketService.on('group_created', (newGroup) => {
+      // Auto-join the socket room for the new group
+      socketService.socket?.emit('join_conversation', newGroup._id);
+      setConversations(prev => {
+        if (prev.some(c => c._id === newGroup._id)) return prev;
+        return [newGroup, ...prev];
+      });
     });
 
     return () => {
@@ -251,6 +262,7 @@ export default function App() {
           onOpenStatus={() => { syncStatuses(); setActiveView('status'); }}
           onEditProfile={() => setShowProfileSetup(true)}
           onLogout={handleLogout}
+          onOpenCreateGroup={() => setIsCreateGroupOpen(true)}
         >
           {activeConversation ? (
             <ChatWindow
@@ -263,6 +275,21 @@ export default function App() {
           ) : null}
         </MainLayout>
       )}
+
+      <CreateGroupModal
+        isOpen={isCreateGroupOpen}
+        onClose={() => setIsCreateGroupOpen(false)}
+        users={users}
+        currentUser={currentUser}
+        onGroupCreated={(newGroup) => {
+          setConversations(prev => {
+            if (prev.some(c => c._id === newGroup._id)) return prev;
+            return [newGroup, ...prev];
+          });
+          setActiveConversation(newGroup);
+          socketService.socket?.emit('join_conversation', newGroup._id);
+        }}
+      />
     </>
   );
 }

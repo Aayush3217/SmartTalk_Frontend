@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { 
   Send, Paperclip, Smile, MoreVertical, Trash2, Check, CheckCheck, 
-  Image as ImageIcon, Film as VideoIcon, Sparkles, X, Copy, FileText
+  Image as ImageIcon, Film as VideoIcon, Sparkles, X, Copy, FileText, Users
 } from 'lucide-react';
 import socketService from '../services/socket';
 
@@ -12,6 +12,7 @@ const EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
 
 export default function ChatWindow({ activeConversation, currentUser, onNewMessage }) {
   const [messages, setMessages] = useState([]);
+  const [typingUsername, setTypingUsername] = useState('');
   const [inputText, setInputText] = useState('');
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState('');
@@ -60,7 +61,7 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
   const fileInputRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
-  const receiver = activeConversation.participants.find(p => p._id !== currentUser._id);
+  const receiver = activeConversation.isGroup ? null : activeConversation.participants.find(p => p._id !== currentUser._id);
 
   // Fetch messages when conversation changes
   useEffect(() => {
@@ -104,9 +105,12 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
     // Listen for new messages
     const handleReceiveMessage = (msg) => {
       if (msg.conversation === activeConversation._id) {
-        setMessages(prev => [...prev, msg]);
+        setMessages(prev => {
+          if (prev.some(m => m._id === msg._id)) return prev;
+          return [...prev, msg];
+        });
         scrollToBottom();
-
+ 
         // Mark as read immediately if it's from the other person
         if (msg.sender._id !== currentUser._id) {
           axios.put(`${API_BASE}/chats/message/read`, { messageIds: [msg._id] }, { withCredentials: true })
@@ -117,16 +121,17 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
         }
       }
     };
-
+ 
     // Listen for message deletions
     const handleMessageDeleted = (deletedMessageId) => {
       setMessages(prev => prev.filter(m => m._id !== deletedMessageId));
     };
-
+ 
     // Listen for typing events
-    const handleUserTyping = ({ userId, conversationId, isTyping }) => {
+    const handleUserTyping = ({ userId, conversationId, isTyping, username }) => {
       if (conversationId === activeConversation._id && userId !== currentUser._id) {
         setTypingUser(isTyping);
+        setTypingUsername(username || 'Someone');
       }
     };
 
@@ -161,7 +166,7 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
       .filter(m => m.sender._id !== currentUser._id && m.messageStatus !== 'read')
       .map(m => m._id);
 
-    if (unreadMessageIds.length > 0) {
+    if (unreadMessageIds.length > 0 && receiver) {
       axios.put(`${API_BASE}/chats/message/read`, { messageIds: unreadMessageIds }, { withCredentials: true })
         .then(() => {
           socketService.emitMessageRead(unreadMessageIds, receiver._id);
@@ -242,14 +247,14 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
     // Emit typing_start
     if (!isTyping) {
       setIsTyping(true);
-      socketService.emitTypingStart(activeConversation._id, receiver._id);
+      socketService.emitTypingStart(activeConversation._id, receiver?._id);
     }
-
+ 
     // Debounce typing_stop
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     typingTimeoutRef.current = setTimeout(() => {
       setIsTyping(false);
-      socketService.emitTypingStop(activeConversation._id, receiver._id);
+      socketService.emitTypingStop(activeConversation._id, receiver?._id);
     }, 2000);
   };
 
@@ -265,7 +270,11 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
     try {
       const formData = new FormData();
       formData.append('senderId', currentUser._id);
-      formData.append('receiverId', receiver._id);
+      if (activeConversation.isGroup) {
+        formData.append('conversationId', activeConversation._id);
+      } else {
+        formData.append('receiverId', receiver?._id);
+      }
       formData.append('content', text.trim());
       formData.append('messageStatus', 'send');
 
@@ -532,7 +541,11 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
         withCredentials: true
       });
       setMessages(prev => prev.filter(m => m._id !== messageId));
-      socketService.emitSendMessage({ type: 'delete', messageId, receiverId: receiver._id });
+      if (activeConversation.isGroup) {
+        socketService.emitSendMessage({ type: 'delete', messageId, conversation: activeConversation._id });
+      } else {
+        socketService.emitSendMessage({ type: 'delete', messageId, receiverId: receiver?._id });
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -594,25 +607,49 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
       {/* Header */}
       <div className="h-16 bg-slate-800/40 px-6 flex items-center justify-between border-b border-slate-800/80 z-10">
         <div className="flex items-center gap-3">
-          {receiver.profilePicture ? (
-            <img src={receiver.profilePicture} alt="" className="w-10 h-10 rounded-full object-cover" />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-slate-850 text-emerald-555 font-bold flex items-center justify-center">
-              {receiver.username?.charAt(0).toUpperCase()}
-            </div>
-          )}
-          <div>
-            <div className="font-semibold text-sm text-slate-100">{receiver.username}</div>
-            <div className="text-xs">
-              {typingUser ? (
-                <span className="text-emerald-400 font-semibold animate-pulse">typing...</span>
-              ) : receiver.isOnline ? (
-                <span className="text-emerald-400">online</span>
+          {activeConversation.isGroup ? (
+            <>
+              {activeConversation.groupAvatar ? (
+                <img src={activeConversation.groupAvatar} alt="" className="w-10 h-10 rounded-full object-cover border border-slate-850" />
               ) : (
-                <span className="text-slate-500">offline</span>
+                <div className="w-10 h-10 rounded-full bg-slate-850 text-emerald-500 font-bold flex items-center justify-center border border-slate-850">
+                  <Users className="w-5 h-5 text-emerald-555" />
+                </div>
               )}
-            </div>
-          </div>
+              <div>
+                <div className="font-semibold text-sm text-slate-100">{activeConversation.groupName}</div>
+                <div className="text-xs">
+                  {typingUser ? (
+                    <span className="text-emerald-400 font-semibold animate-pulse">{typingUsername} is typing...</span>
+                  ) : (
+                    <span className="text-slate-500 font-medium">{activeConversation.participants?.length || 0} members</span>
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {receiver?.profilePicture ? (
+                <img src={receiver.profilePicture} alt="" className="w-10 h-10 rounded-full object-cover" />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-slate-850 text-emerald-555 font-bold flex items-center justify-center">
+                  {receiver?.username?.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div>
+                <div className="font-semibold text-sm text-slate-100">{receiver?.username}</div>
+                <div className="text-xs">
+                  {typingUser ? (
+                    <span className="text-emerald-400 font-semibold animate-pulse">typing...</span>
+                  ) : receiver?.isOnline ? (
+                    <span className="text-emerald-400">online</span>
+                  ) : (
+                    <span className="text-slate-500">offline</span>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
         </div>
         <div className="flex items-center gap-1.5">
           <button 
@@ -642,7 +679,9 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
         {messages.length === 0 ? (
           <div className="m-auto flex flex-col items-center text-center gap-3 max-w-xs text-slate-450">
             <Sparkles className="w-9 h-9 text-emerald-500" />
-            <p className="text-sm font-semibold">Start a secure conversation with {receiver.username}</p>
+            <p className="text-sm font-semibold">
+              Start a secure conversation {activeConversation.isGroup ? `in ${activeConversation.groupName}` : `with ${receiver?.username}`}
+            </p>
             <span className="text-xxs text-slate-500">Messages are end-to-end connected in real time.</span>
           </div>
         ) : (
