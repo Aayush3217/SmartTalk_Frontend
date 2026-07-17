@@ -39,6 +39,7 @@ export default function ProfileSetup({ onCancel }) {
   const [preferredLanguage, setPreferredLanguage] = useState(currentUser.preferredLanguage || 'English');
 
   const LANGUAGES = [
+    'No Conversion',
     'English',
     'Hindi',
     'Punjabi',
