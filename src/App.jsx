@@ -8,14 +8,14 @@ import MainLayout from './components/MainLayout';
 import ChatWindow from './components/ChatWindow';
 import StatusArea from './components/StatusArea';
 import CreateGroupModal from './components/CreateGroupModal';
+import { useUserStore } from './store/useUserStore';
 
 const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/\/$/, '');
 const API_BASE = `${BACKEND_URL}/api`;
 const SOCKET_BASE = BACKEND_URL;
 
 export default function App() {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [isAuthChecking, setIsAuthChecking] = useState(true);
+  const { currentUser, setCurrentUser, isAuthChecking, setAuthChecking, clearUser } = useUserStore();
   const [showProfileSetup, setShowProfileSetup] = useState(false);
   
   // Real-time & Lists States
@@ -52,9 +52,18 @@ export default function App() {
         console.log('No valid session found, user is guest');
       })
       .finally(() => {
-        setIsAuthChecking(false);
+        setAuthChecking(false);
       });
   }, []);
+
+  // Reactive check to show Profile Setup if username is missing
+  useEffect(() => {
+    if (currentUser && !currentUser.username) {
+      setShowProfileSetup(true);
+    } else {
+      setShowProfileSetup(false);
+    }
+  }, [currentUser]);
 
   // 2. Setup Socket and Sync Lists upon successful login
   useEffect(() => {
@@ -111,6 +120,26 @@ export default function App() {
         if (prev.some(c => c._id === newGroup._id)) return prev;
         return [newGroup, ...prev];
       });
+    });
+
+    socketService.on('group_deleted', ({ conversationId }) => {
+      setActiveConversation(prev => {
+        if (prev && prev._id === conversationId) {
+          return null;
+        }
+        return prev;
+      });
+      syncDirectoryAndConversations();
+    });
+
+    socketService.on('user_deleted', ({ userId }) => {
+      setActiveConversation(prev => {
+        if (prev && !prev.isGroup && prev.participants.some(p => p._id === userId)) {
+          return null;
+        }
+        return prev;
+      });
+      syncDirectoryAndConversations();
     });
 
     return () => {
@@ -200,7 +229,7 @@ export default function App() {
         withCredentials: true
       });
       localStorage.removeItem('auth_token');
-      setCurrentUser(null);
+      clearUser();
       setActiveConversation(null);
       setSocket(null);
       setActiveView('chats');
@@ -219,31 +248,17 @@ export default function App() {
   }
 
   if (!currentUser) {
-    return <Login onAuthSuccess={(user) => {
-      setCurrentUser(user);
-      if (!user.username) {
-        setShowProfileSetup(true);
-      }
-    }} />;
+    return <Login />;
   }
 
   if (showProfileSetup) {
-    return (
-      <ProfileSetup 
-        currentUser={currentUser} 
-        onProfileComplete={(updatedUser) => {
-          setCurrentUser(updatedUser);
-          setShowProfileSetup(false);
-        }} 
-      />
-    );
+    return <ProfileSetup onCancel={() => setShowProfileSetup(false)} />;
   }
 
   return (
     <>
       {activeView === 'status' ? (
         <StatusArea
-          currentUser={currentUser}
           statuses={statuses}
           onStatusCreated={(newStatus) => {
             setStatuses(prev => [newStatus, ...prev]);
@@ -253,7 +268,6 @@ export default function App() {
         />
       ) : (
         <MainLayout
-          currentUser={currentUser}
           users={users}
           conversations={conversations}
           activeConversation={activeConversation}
@@ -267,7 +281,6 @@ export default function App() {
           {activeConversation ? (
             <ChatWindow
               activeConversation={activeConversation}
-              currentUser={currentUser}
               onNewMessage={() => {
                 syncDirectoryAndConversations();
               }}

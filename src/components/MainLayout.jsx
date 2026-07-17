@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { 
   MessageSquare, CircleDot, LogOut, Search, User, Sparkles, Shield, ChevronRight, Edit2, Users 
 } from 'lucide-react';
+import { useUserStore } from '../store/useUserStore';
 
 export default function MainLayout({ 
-  currentUser, 
   users, 
   conversations, 
   activeConversation, 
@@ -16,6 +16,7 @@ export default function MainLayout({
   onOpenCreateGroup,
   children 
 }) {
+  const currentUser = useUserStore((state) => state.currentUser);
   const [searchQuery, setSearchQuery] = useState('');
   
   // Format last message time

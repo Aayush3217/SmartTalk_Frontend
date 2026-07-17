@@ -1,11 +1,36 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Camera, User, FileText, Check, AlertCircle, ChevronDown, Globe } from 'lucide-react';
+import { useUserStore } from '../store/useUserStore';
 
 const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/\/$/, '');
 const API_BASE = `${BACKEND_URL}/api`;
 
-export default function ProfileSetup({ currentUser, onProfileComplete }) {
+export default function ProfileSetup({ onCancel }) {
+  const { currentUser, setCurrentUser, clearUser } = useUserStore();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const token = localStorage.getItem('auth_token');
+      await axios.delete(`${API_BASE}/auth/delete-account`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        withCredentials: true
+      });
+      localStorage.removeItem('auth_token');
+      clearUser();
+    } catch (err) {
+      console.error("Delete account error:", err);
+      setError(err.response?.data?.message || "Failed to delete account. Please try again.");
+    } finally {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
   const [username, setUsername] = useState(currentUser.username || '');
   const [about, setAbout] = useState(currentUser.about || 'Hey there! I am using WhatsApp.');
   const [profilePicture, setProfilePicture] = useState(currentUser.profilePicture || '');
@@ -69,7 +94,7 @@ export default function ProfileSetup({ currentUser, onProfileComplete }) {
       });
 
       if (response.data?.data) {
-        onProfileComplete(response.data.data);
+        setCurrentUser(response.data.data);
       }
     } catch (err) {
       console.error(err);
@@ -177,19 +202,70 @@ export default function ProfileSetup({ currentUser, onProfileComplete }) {
             </div>
           </div>
 
-          <button 
-            type="submit" 
-            disabled={loading} 
-            className="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-99 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer shadow-lg hover:shadow-emerald-600/10 transition-all flex items-center justify-center gap-2 disabled:bg-slate-800 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-emerald-500"></div>
-            ) : (
-              <>Save Profile <Check className="w-4 h-4" /></>
+          <div className="flex gap-3">
+            {currentUser?.username && onCancel && (
+              <button 
+                type="button"
+                onClick={onCancel}
+                disabled={loading}
+                className="flex-1 bg-transparent hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer disabled:opacity-50"
+              >
+                Cancel
+              </button>
             )}
-          </button>
+            <button 
+              type="submit" 
+              disabled={loading} 
+              className="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-99 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer shadow-lg hover:shadow-emerald-600/10 transition-all flex items-center justify-center gap-2 disabled:bg-slate-800 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-emerald-500"></div>
+              ) : (
+                <>Save Profile <Check className="w-4 h-4" /></>
+              )}
+            </button>
+          </div>
         </form>
+
+        {currentUser?.username && (
+          <div className="border-t border-slate-800/80 pt-4 flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="w-full bg-red-950/20 hover:bg-red-900/20 border border-red-900/30 hover:border-red-900/50 text-red-400 py-3 rounded-xl text-sm font-semibold cursor-pointer transition-all flex items-center justify-center gap-2"
+            >
+              Delete Account
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Delete Account Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-slate-900 border border-slate-800/80 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl flex flex-col gap-4 animate-fade-in">
+            <h3 className="text-base font-bold text-slate-100">Delete Account?</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Are you sure you want to delete your account? This will permanently delete your profile, messages, conversations, and remove you from all groups. This action cannot be undone.
+            </p>
+            <div className="flex gap-3 mt-2">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1 bg-transparent hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deleting}
+                className="flex-1 bg-red-650 hover:bg-red-600 active:scale-99 text-white py-2.5 rounded-xl text-xs font-semibold cursor-pointer shadow-lg hover:shadow-red-650/10 transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+              >
+                {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -10,7 +10,10 @@ const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
 const API_BASE = `${BACKEND_URL}/api`;
 const EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
 
-export default function ChatWindow({ activeConversation, currentUser, onNewMessage }) {
+import { useUserStore } from '../store/useUserStore';
+
+export default function ChatWindow({ activeConversation, onNewMessage }) {
+  const currentUser = useUserStore((state) => state.currentUser);
   const [messages, setMessages] = useState([]);
   const [typingUsername, setTypingUsername] = useState('');
   const [inputText, setInputText] = useState('');
@@ -63,6 +66,36 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
 
   const receiver = activeConversation.isGroup ? null : activeConversation.participants.find(p => p._id !== currentUser._id);
 
+  const [showHeaderMenu, setShowHeaderMenu] = useState(false);
+  const [showDeleteGroupConfirm, setShowDeleteGroupConfirm] = useState(false);
+  const [deletingGroup, setDeletingGroup] = useState(false);
+
+  const handleDeleteGroupConfirm = () => {
+    setShowDeleteGroupConfirm(true);
+  };
+
+  const handleDeleteGroupFinal = async () => {
+    setDeletingGroup(true);
+    try {
+      const token = localStorage.getItem('auth_token');
+      await axios.delete(`${API_BASE}/chats/group/${activeConversation._id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        withCredentials: true
+      });
+      if (onNewMessage) {
+        onNewMessage();
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Failed to delete group chat.');
+    } finally {
+      setDeletingGroup(false);
+      setShowDeleteGroupConfirm(false);
+    }
+  };
+
   // Fetch messages when conversation changes
   useEffect(() => {
     if (!activeConversation?._id) return;
@@ -106,7 +139,9 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
     const handleReceiveMessage = (msg) => {
       if (msg.conversation === activeConversation._id) {
         setMessages(prev => {
-          if (prev.some(m => m._id === msg._id)) return prev;
+          if (prev.some(m => m._id === msg._id)) {
+            return prev.map(m => m._id === msg._id ? msg : m);
+          }
           return [...prev, msg];
         });
         scrollToBottom();
@@ -668,9 +703,43 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
           >
             <Sparkles className="w-5 h-5 animate-pulse" />
           </button>
-          <button className="p-2 text-slate-400 hover:text-slate-200 rounded-full transition-colors cursor-pointer">
-            <MoreVertical className="w-5 h-5" />
-          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setShowHeaderMenu(prev => !prev)}
+              className="p-2 text-slate-400 hover:text-slate-200 rounded-full transition-colors cursor-pointer"
+            >
+              <MoreVertical className="w-5 h-5" />
+            </button>
+            
+            {showHeaderMenu && (
+              <div 
+                className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-1 z-50 animate-fade-in"
+                onMouseLeave={() => setShowHeaderMenu(false)}
+              >
+                {activeConversation.isGroup && 
+                 (activeConversation.groupAdmin?._id === currentUser._id || 
+                  activeConversation.groupAdmin === currentUser._id) && (
+                  <button
+                    onClick={() => {
+                      setShowHeaderMenu(false);
+                      handleDeleteGroupConfirm();
+                    }}
+                    className="w-full text-left px-4 py-2.5 text-xs text-red-400 hover:bg-slate-850 hover:text-red-300 font-semibold transition-colors flex items-center gap-2 cursor-pointer border-none bg-transparent"
+                  >
+                    <Trash2 className="w-4 h-4" /> Delete Group Chat
+                  </button>
+                )}
+                {!activeConversation.isGroup && (
+                  <div className="px-4 py-2 text-xxs text-slate-500 font-semibold italic">No actions available</div>
+                )}
+                {activeConversation.isGroup && 
+                 !(activeConversation.groupAdmin?._id === currentUser._id || 
+                   activeConversation.groupAdmin === currentUser._id) && (
+                  <div className="px-4 py-2 text-xxs text-slate-500 font-semibold italic">Only admin can delete group</div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -1254,6 +1323,32 @@ export default function ChatWindow({ activeConversation, currentUser, onNewMessa
                 className="px-4 py-2 bg-slate-850 hover:bg-slate-800 text-slate-350 hover:text-slate-200 text-xs font-semibold rounded-xl cursor-pointer transition-all"
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Delete Group Confirmation Modal */}
+      {showDeleteGroupConfirm && (
+        <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-slate-900 border border-slate-800/80 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl flex flex-col gap-4 animate-fade-in">
+            <h3 className="text-base font-bold text-slate-100">Delete Group Chat?</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Are you sure you want to delete <strong className="text-slate-200">"{activeConversation.groupName}"</strong>? This will permanently delete the group, remove all members, and delete all messages. This action cannot be undone.
+            </p>
+            <div className="flex gap-3 mt-2">
+              <button
+                onClick={() => setShowDeleteGroupConfirm(false)}
+                className="flex-1 bg-transparent hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteGroupFinal}
+                disabled={deletingGroup}
+                className="flex-1 bg-red-650 hover:bg-red-600 active:scale-99 text-white py-2.5 rounded-xl text-xs font-semibold cursor-pointer shadow-lg hover:shadow-red-600/10 transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+              >
+                {deletingGroup ? 'Deleting...' : 'Delete Group'}
               </button>
             </div>
           </div>

@@ -6,7 +6,10 @@ import socketService from '../services/socket';
 const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/\/$/, '');
 const API_BASE = `${BACKEND_URL}/api`;
 
-export default function StatusArea({ currentUser, statuses, onStatusCreated, onClose }) {
+import { useUserStore } from '../store/useUserStore';
+
+export default function StatusArea({ statuses, onStatusCreated, onClose }) {
+  const currentUser = useUserStore((state) => state.currentUser);
   const [activeStoryIndex, setActiveStoryIndex] = useState(null);
   const [activeUserStories, setActiveUserStories] = useState([]);
   

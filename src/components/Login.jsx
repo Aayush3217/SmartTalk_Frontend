@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Mail, Phone, Lock, ArrowRight, Smartphone, AlertCircle, CheckCircle2, User, Camera, Globe, ChevronDown } from 'lucide-react';
+import { useUserStore } from '../store/useUserStore';
 
 const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/\/$/, '');
 const API_BASE = `${BACKEND_URL}/api`;
 
-export default function Login({ onAuthSuccess }) {
+export default function Login() {
+  const setCurrentUser = useUserStore((state) => state.setCurrentUser);
   const [method, setMethod] = useState('phone'); // 'phone' | 'manual'
+  const [isManualLogin, setIsManualLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -80,7 +83,7 @@ export default function Login({ onAuthSuccess }) {
       }
       
       setTimeout(() => {
-        onAuthSuccess(response.data.data.user);
+        setCurrentUser(response.data.data.user);
       }, 800);
     } catch (err) {
       console.error(err);
@@ -125,7 +128,7 @@ export default function Login({ onAuthSuccess }) {
       }
       
       setTimeout(() => {
-        onAuthSuccess(response.data.data.user);
+        setCurrentUser(response.data.data.user);
       }, 800);
     } catch (err) {
       console.error(err);
@@ -279,116 +282,154 @@ export default function Login({ onAuthSuccess }) {
         ) : (
           /* Manual Sign Up and Login Direct Flow */
           <form onSubmit={handleManualSubmit} className="flex flex-col gap-5">
-            {/* Avatar Selector */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="relative w-20 h-20 rounded-full border-2 border-slate-800 bg-slate-950 flex items-center justify-center group overflow-hidden animate-pulse-subtle">
-                {previewUrl ? (
-                  <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-full" />
-                ) : (
-                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center">
-                    <User className="w-8 h-8 text-slate-650" />
+            {isManualLogin ? (
+              <>
+                {/* Email Input */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Email Address</label>
+                  <div className="relative flex items-center">
+                    <Mail className="absolute left-3.5 text-slate-500 w-4 h-4" />
+                    <input
+                      type="email"
+                      placeholder="name@domain.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                    />
                   </div>
-                )}
-                <label 
-                  htmlFor="avatar-login-upload" 
-                  className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center cursor-pointer border border-slate-900 transition-colors shadow-lg"
-                >
-                  <Camera className="w-3.5 h-3.5 text-white" />
-                  <input
-                    id="avatar-login-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-              <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Profile Picture (Optional)</span>
-            </div>
-
-            {/* Name Input */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Name</label>
-              <div className="relative flex items-center">
-                <User className="absolute left-3.5 text-slate-500 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="John Doe"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-600 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
-                />
-              </div>
-            </div>
-
-            {/* Email Input */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Email Address</label>
-              <div className="relative flex items-center">
-                <Mail className="absolute left-3.5 text-slate-500 w-4 h-4" />
-                <input
-                  type="email"
-                  placeholder="name@domain.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-600 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
-                />
-              </div>
-            </div>
-            
-            {/* Password Input */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Password</label>
-              <div className="relative flex items-center">
-                <Lock className="absolute left-3.5 text-slate-500 w-4 h-4" />
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-600 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
-                />
-              </div>
-            </div>
-
-            {/* Preferred Language Selection */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Preferred Language</label>
-              <div className="relative flex items-center">
-                <Globe className="absolute left-3.5 text-slate-500 w-4 h-4 z-10" />
-                <select
-                  value={preferredLanguage}
-                  onChange={(e) => setPreferredLanguage(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-10 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 appearance-none cursor-pointer"
-                >
-                  {LANGUAGES.map(lang => (
-                    <option key={lang} value={lang} className="bg-slate-900 text-slate-200">
-                      {lang}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute right-4 flex items-center text-slate-550">
-                  <ChevronDown className="w-3.5 h-3.5" />
                 </div>
-              </div>
-            </div>
+                
+                {/* Password Input */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Password</label>
+                  <div className="relative flex items-center">
+                    <Lock className="absolute left-3.5 text-slate-500 w-4 h-4" />
+                    <input
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Avatar Selector */}
+                <div className="flex flex-col items-center gap-2">
+                  <div className="relative w-20 h-20 rounded-full border-2 border-slate-800 bg-slate-950 flex items-center justify-center group overflow-hidden animate-pulse-subtle">
+                    {previewUrl ? (
+                      <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-full" />
+                    ) : (
+                      <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center">
+                        <User className="w-8 h-8 text-slate-650" />
+                      </div>
+                    )}
+                    <label 
+                      htmlFor="avatar-login-upload" 
+                      className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center cursor-pointer border border-slate-900 transition-colors shadow-lg"
+                    >
+                      <Camera className="w-3.5 h-3.5 text-white" />
+                      <input
+                        id="avatar-login-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                  <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Profile Picture (Optional)</span>
+                </div>
 
-            {/* About status info */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Status Description</label>
-              <div className="relative flex items-center">
-                <input
-                  type="text"
-                  placeholder="Hey there! I am using WhatsApp."
-                  value={about}
-                  onChange={(e) => setAbout(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 px-4 text-xs text-slate-100 placeholder-slate-600 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
-                />
-              </div>
-            </div>
+                {/* Name Input */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Name</label>
+                  <div className="relative flex items-center">
+                    <User className="absolute left-3.5 text-slate-500 w-4 h-4" />
+                    <input
+                      type="text"
+                      placeholder="John Doe"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                    />
+                  </div>
+                </div>
+
+                {/* Email Input */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Email Address</label>
+                  <div className="relative flex items-center">
+                    <Mail className="absolute left-3.5 text-slate-500 w-4 h-4" />
+                    <input
+                      type="email"
+                      placeholder="name@domain.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                    />
+                  </div>
+                </div>
+                
+                {/* Password Input */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Password</label>
+                  <div className="relative flex items-center">
+                    <Lock className="absolute left-3.5 text-slate-500 w-4 h-4" />
+                    <input
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                    />
+                  </div>
+                </div>
+
+                {/* Preferred Language Selection */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Preferred Language</label>
+                  <div className="relative flex items-center">
+                    <Globe className="absolute left-3.5 text-slate-500 w-4 h-4 z-10" />
+                    <select
+                      value={preferredLanguage}
+                      onChange={(e) => setPreferredLanguage(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-10 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 appearance-none cursor-pointer"
+                    >
+                      {LANGUAGES.map(lang => (
+                        <option key={lang} value={lang} className="bg-slate-900 text-slate-200">
+                          {lang}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute right-4 flex items-center text-slate-550">
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* About status info */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Status Description</label>
+                  <div className="relative flex items-center">
+                    <input
+                      type="text"
+                      placeholder="Hey there! I am using WhatsApp."
+                      value={about}
+                      onChange={(e) => setAbout(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 px-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
             <button 
               type="submit" 
@@ -398,9 +439,27 @@ export default function Login({ onAuthSuccess }) {
               {loading ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-emerald-500"></div>
               ) : (
-                <>Sign In / Access Account <ArrowRight className="w-4 h-4" /></>
+                <>
+                  {isManualLogin ? 'Login / Access Account' : 'Create Account / Register'} 
+                  <ArrowRight className="w-4 h-4" />
+                </>
               )}
             </button>
+
+            {/* Switch Mode Link */}
+            <div className="text-center mt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsManualLogin(!isManualLogin);
+                  setError('');
+                  setMessage('');
+                }}
+                className="text-xs text-emerald-555 hover:text-emerald-450 font-semibold underline cursor-pointer transition-colors"
+              >
+                {isManualLogin ? "New user? Create an account instead" : "Already have an account? Log in directly"}
+              </button>
+            </div>
           </form>
         )}
       </div>
