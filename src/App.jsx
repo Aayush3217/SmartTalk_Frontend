@@ -284,6 +284,7 @@ export default function App() {
               onNewMessage={() => {
                 syncDirectoryAndConversations();
               }}
+              onBack={() => setActiveConversation(null)}
             />
           ) : null}
         </MainLayout>

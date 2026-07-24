@@ -56,7 +56,9 @@ export default function MainLayout({
       <div className="w-full h-full max-w-7xl bg-slate-900 border border-slate-800/80 rounded-2xl overflow-hidden shadow-2xl flex">
         
         {/* Left Sidebar */}
-        <div className="w-full md:w-[35%] lg:w-[30%] min-w-[340px] h-full flex flex-col bg-slate-900 border-r border-slate-800/80">
+        <div className={`w-full md:w-[35%] lg:w-[30%] min-w-[340px] h-full flex flex-col bg-slate-900 border-r border-slate-800/80 ${
+          activeConversation ? 'hidden md:flex' : 'flex'
+        }`}>
           
           {/* Header */}
           <div className="h-16 bg-slate-800/50 px-4 flex items-center justify-between border-b border-slate-800/80">
@@ -223,7 +225,9 @@ export default function MainLayout({
         </div>
 
         {/* Right workspace view */}
-        <div className="flex-1 h-full flex flex-col bg-slate-950">
+        <div className={`flex-1 h-full flex flex-col bg-slate-950 ${
+          activeConversation ? 'flex' : 'hidden md:flex'
+        }`}>
           {children ? children : (
             <div className="flex-1 flex items-center justify-center bg-slate-950/70 relative">
               {/* Decorative radial overlay */}

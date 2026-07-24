@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { 
   Send, Paperclip, Smile, MoreVertical, Trash2, Check, CheckCheck, 
-  Image as ImageIcon, Film as VideoIcon, Sparkles, X, Copy, FileText, Users
+  Image as ImageIcon, Film as VideoIcon, Sparkles, X, Copy, FileText, Users, ArrowLeft
 } from 'lucide-react';
 import socketService from '../services/socket';
 
@@ -12,7 +12,7 @@ const EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
 
 import { useUserStore } from '../store/useUserStore';
 
-export default function ChatWindow({ activeConversation, onNewMessage }) {
+export default function ChatWindow({ activeConversation, onNewMessage, onBack }) {
   const currentUser = useUserStore((state) => state.currentUser);
   const [messages, setMessages] = useState([]);
   const [typingUsername, setTypingUsername] = useState('');
@@ -640,8 +640,18 @@ export default function ChatWindow({ activeConversation, onNewMessage }) {
       <div className="flex-1 flex flex-col h-full bg-slate-950 min-w-0 border-r border-slate-800/10">
       
       {/* Header */}
-      <div className="h-16 bg-slate-800/40 px-6 flex items-center justify-between border-b border-slate-800/80 z-10">
-        <div className="flex items-center gap-3">
+      <div className="h-16 bg-slate-800/40 px-4 md:px-6 flex items-center justify-between border-b border-slate-800/80 z-10">
+        <div className="flex items-center gap-2 md:gap-3">
+          {onBack && (
+            <button 
+              type="button"
+              onClick={onBack}
+              className="md:hidden p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-850 rounded-full transition-colors cursor-pointer mr-1"
+              title="Back to Chats"
+            >
+              <ArrowLeft className="w-5 h-5 animate-fade-in" />
+            </button>
+          )}
           {activeConversation.isGroup ? (
             <>
               {activeConversation.groupAvatar ? (
@@ -1073,7 +1083,7 @@ export default function ChatWindow({ activeConversation, onNewMessage }) {
 
       {/* AI Assistant Panel Drawer */}
       {showAiPanel && (
-        <div className="w-80 md:w-96 border-l border-slate-800/80 bg-slate-900 h-full flex flex-col animate-slide-in relative z-20 shrink-0">
+        <div className="absolute md:relative right-0 top-0 bottom-0 z-20 w-full md:w-96 border-l border-slate-800/80 bg-slate-900 h-full flex flex-col animate-slide-in shrink-0">
           {/* Drawer Header */}
           <div className="h-16 border-b border-slate-800/80 px-4 flex items-center justify-between bg-slate-850">
             <div className="flex items-center gap-2">
