@@ -90,7 +90,7 @@ export default function CreateGroupModal({ isOpen, onClose, users, currentUser, 
         {/* Header */}
         <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
           <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-emerald-500" />
+            <Users className="w-5 h-5 text-cyan-400" />
             <h3 className="text-base font-bold text-slate-100">Create New Group</h3>
           </div>
           <button 
@@ -145,7 +145,7 @@ export default function CreateGroupModal({ isOpen, onClose, users, currentUser, 
                 value={groupName}
                 onChange={(e) => setGroupName(e.target.value)}
                 required
-                className="w-full bg-slate-950 border border-slate-850 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2 px-3 text-xs text-slate-100 placeholder-slate-600 outline-none transition-all focus:ring-2 focus:ring-emerald-500/10"
+                className="w-full bg-slate-950 border border-slate-850 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-2 px-3 text-xs text-slate-100 placeholder-slate-600 outline-none transition-all focus:ring-2 focus:ring-cyan-500/10"
               />
             </div>
 
@@ -157,7 +157,7 @@ export default function CreateGroupModal({ isOpen, onClose, users, currentUser, 
               <label className="text-[10px] text-slate-500 font-semibold tracking-wider uppercase">
                 Select Members
               </label>
-              <span className="text-[10px] text-emerald-500 font-semibold">
+              <span className="text-[10px] text-cyan-400 font-semibold">
                 {selectedUsers.length} selected
               </span>
             </div>
@@ -191,7 +191,7 @@ export default function CreateGroupModal({ isOpen, onClose, users, currentUser, 
                       {/* Custom Checkbox */}
                       <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
                         isSelected 
-                          ? 'bg-emerald-600 border-emerald-600 text-white' 
+                          ? 'bg-brand-gradient border-transparent text-white shadow-brand' 
                           : 'border-slate-800 bg-slate-900'
                       }`}>
                         {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
@@ -216,10 +216,10 @@ export default function CreateGroupModal({ isOpen, onClose, users, currentUser, 
             <button 
               type="submit" 
               disabled={loading || selectedUsers.length < 1 || !groupName.trim()} 
-              className="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-99 text-white py-2 rounded-xl text-xs font-semibold cursor-pointer shadow-lg hover:shadow-emerald-600/10 transition-all flex items-center justify-center gap-2 disabled:bg-slate-850 disabled:text-slate-600 disabled:cursor-not-allowed"
+              className="flex-1 bg-brand-gradient bg-brand-gradient-hover active:scale-99 text-white py-2 rounded-xl text-xs font-semibold cursor-pointer shadow-brand transition-all flex items-center justify-center gap-2 disabled:bg-slate-850 disabled:text-slate-600 disabled:cursor-not-allowed"
             >
               {loading ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-slate-600 border-t-emerald-500"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-slate-600 border-t-cyan-500"></div>
               ) : (
                 'Create Group'
               )}

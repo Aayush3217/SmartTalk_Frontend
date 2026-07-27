@@ -45,3 +45,29 @@
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+/* Brand Colors and Gradients from the smartTalk Logo */
+.text-brand-gradient {
+  background: linear-gradient(135deg, #00d2ff 0%, #a020f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.bg-brand-gradient {
+  background: linear-gradient(135deg, #00d2ff 0%, #a020f0 100%);
+}
+
+.bg-brand-gradient-hover:hover {
+  background: linear-gradient(135deg, #00bfff 0%, #8b1cd3 100%);
+}
+
+.shadow-brand {
+  box-shadow: 0 10px 30px -10px rgba(0, 210, 255, 0.3), 0 10px 30px -10px rgba(160, 32, 240, 0.3);
+}
+
+.border-brand-glow:focus-within {
+  border-color: #00d2ff;
+  box-shadow: 0 0 12px rgba(0, 210, 255, 0.25);
+}
+

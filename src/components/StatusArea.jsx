@@ -164,21 +164,21 @@ export default function StatusArea({ statuses, onStatusCreated, onClose }) {
         </div>
 
         {/* My Status */}
-        <div className="text-xxs font-bold text-emerald-555 px-5 pt-5 pb-2 uppercase tracking-wider">
+        <div className="text-xxs font-bold text-cyan-400 px-5 pt-5 pb-2 uppercase tracking-wider">
           My Status
         </div>
         <div className="flex items-center px-5 py-3 gap-4 border-b border-slate-800/30 hover:bg-slate-850/20 transition-all">
           <div 
             onClick={() => myGroup.stories.length > 0 && startPlayingStories(myGroup.stories)} 
             className={`relative p-0.5 rounded-full cursor-pointer ${
-              myGroup.stories.length > 0 ? 'bg-gradient-to-tr from-emerald-500 to-emerald-600' : 'bg-slate-800'
+              myGroup.stories.length > 0 ? 'bg-brand-gradient' : 'bg-slate-800'
             }`}
           >
             <div className="rounded-full border-2 border-slate-900 overflow-hidden bg-slate-850 w-12 h-12 flex items-center justify-center">
               {currentUser.profilePicture ? (
                 <img src={currentUser.profilePicture} alt="" className="w-full h-full object-cover" />
               ) : (
-                <div className="text-emerald-555 font-bold text-lg">{currentUser.username?.charAt(0).toUpperCase()}</div>
+                <div className="text-cyan-400 font-bold text-lg">{currentUser.username?.charAt(0).toUpperCase()}</div>
               )}
             </div>
           </div>
@@ -213,7 +213,7 @@ export default function StatusArea({ statuses, onStatusCreated, onClose }) {
         </div>
 
         {/* Recent Updates */}
-        <div className="text-xxs font-bold text-emerald-555 px-5 pt-5 pb-2 uppercase tracking-wider">
+        <div className="text-xxs font-bold text-cyan-400 px-5 pt-5 pb-2 uppercase tracking-wider">
           Recent Updates
         </div>
         <div className="flex-1 overflow-y-auto">
@@ -228,12 +228,12 @@ export default function StatusArea({ statuses, onStatusCreated, onClose }) {
                   className="flex items-center px-5 py-3.5 gap-4 cursor-pointer hover:bg-slate-800/30 border-b border-slate-850/10 transition-all"
                   onClick={() => startPlayingStories(group.stories)}
                 >
-                  <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-emerald-500 to-emerald-600">
+                  <div className="relative p-0.5 rounded-full bg-brand-gradient">
                     <div className="rounded-full border-2 border-slate-900 overflow-hidden bg-slate-850 w-12 h-12 flex items-center justify-center">
                       {group.user?.profilePicture ? (
                         <img src={group.user?.profilePicture} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="text-emerald-555 font-bold text-lg">{group.user?.username?.charAt(0).toUpperCase()}</div>
+                        <div className="text-cyan-400 font-bold text-lg">{group.user?.username?.charAt(0).toUpperCase()}</div>
                       )}
                     </div>
                   </div>
@@ -292,9 +292,9 @@ export default function StatusArea({ statuses, onStatusCreated, onClose }) {
               <button 
                 onClick={handleCreateStatus} 
                 disabled={loading || (creationType === 'text' && !textContent.trim())}
-                className="bg-emerald-650 hover:bg-emerald-600 active:scale-97 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-all flex items-center gap-2 cursor-pointer disabled:bg-slate-800 disabled:text-slate-650 disabled:cursor-not-allowed"
+                className="bg-brand-gradient bg-brand-gradient-hover active:scale-97 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-all flex items-center gap-2 cursor-pointer disabled:bg-slate-800 disabled:text-slate-650 disabled:cursor-not-allowed"
               >
-                {loading ? <div className="animate-spin rounded-full h-4 w-4 border-2 border-slate-600 border-t-emerald-500"></div> : <>Post Status <Send className="w-4 h-4" /></>}
+                {loading ? <div className="animate-spin rounded-full h-4 w-4 border-2 border-slate-600 border-t-cyan-500"></div> : <>Post Status <Send className="w-4 h-4" /></>}
               </button>
             </div>
           </div>
@@ -310,7 +310,7 @@ export default function StatusArea({ statuses, onStatusCreated, onClose }) {
               {activeUserStories.map((_, i) => (
                 <div key={i} className="flex-1 h-0.5 bg-white/20 rounded-full overflow-hidden">
                   <div 
-                    className={`h-full bg-emerald-555 rounded-full ${
+                    className={`h-full bg-brand-gradient rounded-full ${
                       i === activeStoryIndex ? 'story-progress-fill' : i < activeStoryIndex ? 'w-full' : 'w-0'
                     }`}
                   />
@@ -324,7 +324,7 @@ export default function StatusArea({ statuses, onStatusCreated, onClose }) {
                 {activeStory.user?.profilePicture ? (
                   <img src={activeStory.user.profilePicture} alt="" className="w-10 h-10 rounded-full object-cover border border-white/10" />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-slate-800 text-emerald-500 font-bold flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-slate-800 text-cyan-400 font-bold flex items-center justify-center">
                     {activeStory.user?.username?.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -365,7 +365,7 @@ export default function StatusArea({ statuses, onStatusCreated, onClose }) {
             {/* Views counter info */}
             {activeStory.user?._id === currentUser._id && (
               <div className="p-3 px-4 flex items-center justify-center gap-2 bg-slate-900 border-t border-slate-800 text-slate-300 text-xs cursor-pointer group relative">
-                <Eye className="w-4 h-4 text-emerald-500" />
+                <Eye className="w-4 h-4 text-cyan-400" />
                 <span>{activeStory.viewers.length} views</span>
                 {activeStory.viewers.length > 0 && (
                   <div className="absolute bottom-full left-0 right-0 bg-slate-900 border-b border-slate-800 max-h-48 overflow-y-auto py-1 shadow-2xl hidden group-hover:block hover:block">
@@ -374,7 +374,7 @@ export default function StatusArea({ statuses, onStatusCreated, onClose }) {
                         {v.profilePicture ? (
                           <img src={v.profilePicture} alt="" className="w-7 h-7 rounded-full object-cover" />
                         ) : (
-                          <div className="w-7 h-7 rounded-full bg-slate-800 text-[10px] text-emerald-555 font-bold flex items-center justify-center">U</div>
+                          <div className="w-7 h-7 rounded-full bg-slate-800 text-[10px] text-cyan-400 font-bold flex items-center justify-center">U</div>
                         )}
                         <span className="text-slate-200 font-semibold">{v.username || 'User'}</span>
                       </div>

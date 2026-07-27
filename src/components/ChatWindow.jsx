@@ -612,12 +612,12 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
     if (!text) return '';
     
     let formatted = text
-      .replace(/^### (.*$)/gim, '<h4 class="font-bold text-sm text-emerald-450 mt-2 mb-1">$1</h4>')
-      .replace(/^## (.*$)/gim, '<h3 class="font-bold text-base text-emerald-400 mt-3 mb-1">$1</h3>')
+      .replace(/^### (.*$)/gim, '<h4 class="font-bold text-sm text-cyan-400 mt-2 mb-1">$1</h4>')
+      .replace(/^## (.*$)/gim, '<h3 class="font-bold text-base text-cyan-400 mt-3 mb-1">$1</h3>')
       .replace(/^# (.*$)/gim, '<h2 class="font-bold text-lg text-slate-100 mt-4 mb-2">$1</h2>')
       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-100">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-      .replace(/`(.*?)`/g, '<code class="bg-slate-950/80 border border-slate-800/40 px-1.5 py-0.5 rounded text-emerald-400 font-mono text-[11px]">$1</code>')
+      .replace(/`(.*?)`/g, '<code class="bg-slate-950/80 border border-slate-800/40 px-1.5 py-0.5 rounded text-cyan-400 font-mono text-[11px]">$1</code>')
       .replace(/```([\s\S]*?)```/g, '<pre class="bg-slate-950/80 p-2.5 rounded-lg font-mono text-[11px] text-slate-300 my-2 overflow-x-auto border border-slate-800/60">$1</pre>')
       .replace(/^\s*-\s+(.*$)/gim, '<li class="ml-4 list-disc text-slate-350 my-1">$1</li>')
       .replace(/^\s*\d+\.\s+(.*$)/gim, '<li class="ml-4 list-decimal text-slate-350 my-1">$1</li>')
@@ -657,15 +657,15 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
               {activeConversation.groupAvatar ? (
                 <img src={activeConversation.groupAvatar} alt="" className="w-10 h-10 rounded-full object-cover border border-slate-850" />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-slate-850 text-emerald-500 font-bold flex items-center justify-center border border-slate-850">
-                  <Users className="w-5 h-5 text-emerald-555" />
+                <div className="w-10 h-10 rounded-full bg-slate-850 text-cyan-400 font-bold flex items-center justify-center border border-slate-850">
+                  <Users className="w-5 h-5 text-cyan-400" />
                 </div>
               )}
               <div>
                 <div className="font-semibold text-sm text-slate-100">{activeConversation.groupName}</div>
                 <div className="text-xs">
                   {typingUser ? (
-                    <span className="text-emerald-400 font-semibold animate-pulse">{typingUsername} is typing...</span>
+                    <span className="text-cyan-400 font-semibold animate-pulse">{typingUsername} is typing...</span>
                   ) : (
                     <span className="text-slate-500 font-medium">{activeConversation.participants?.length || 0} members</span>
                   )}
@@ -677,7 +677,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
               {receiver?.profilePicture ? (
                 <img src={receiver.profilePicture} alt="" className="w-10 h-10 rounded-full object-cover" />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-slate-850 text-emerald-555 font-bold flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-slate-850 text-cyan-400 font-bold flex items-center justify-center">
                   {receiver?.username?.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -685,9 +685,9 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
                 <div className="font-semibold text-sm text-slate-100">{receiver?.username}</div>
                 <div className="text-xs">
                   {typingUser ? (
-                    <span className="text-emerald-400 font-semibold animate-pulse">typing...</span>
+                    <span className="text-cyan-400 font-semibold animate-pulse">typing...</span>
                   ) : receiver?.isOnline ? (
-                    <span className="text-emerald-400">online</span>
+                    <span className="text-cyan-400">online</span>
                   ) : (
                     <span className="text-slate-500">offline</span>
                   )}
@@ -700,7 +700,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
           <button 
             onClick={() => handleSummarizeChat(false)}
             title="Summarize Chat"
-            className="p-2 text-slate-400 hover:text-emerald-400 hover:bg-slate-800 rounded-full transition-all cursor-pointer"
+            className="p-2 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded-full transition-all cursor-pointer"
           >
             <FileText className="w-5 h-5" />
           </button>
@@ -708,7 +708,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
             onClick={() => setShowAiPanel(prev => !prev)}
             title="AI Chat Assistant"
             className={`p-2 rounded-full transition-all cursor-pointer ${
-              showAiPanel ? 'text-emerald-450 bg-emerald-500/10' : 'text-slate-400 hover:text-emerald-400 hover:bg-slate-800'
+              showAiPanel ? 'text-cyan-400 bg-cyan-500/10' : 'text-slate-400 hover:text-cyan-400 hover:bg-slate-800'
             }`}
           >
             <Sparkles className="w-5 h-5 animate-pulse" />
@@ -757,7 +757,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
       <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 bg-[radial-gradient(circle_at_center,_#0b0f12_0%,_#05080a_100%)]">
         {messages.length === 0 ? (
           <div className="m-auto flex flex-col items-center text-center gap-3 max-w-xs text-slate-450">
-            <Sparkles className="w-9 h-9 text-emerald-500" />
+            <Sparkles className="w-9 h-9 text-cyan-400 animate-pulse" />
             <p className="text-sm font-semibold">
               Start a secure conversation {activeConversation.isGroup ? `in ${activeConversation.groupName}` : `with ${receiver?.username}`}
             </p>
@@ -788,7 +788,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
                       <div 
                         className={`p-3 rounded-2xl relative shadow-md ${
                           isMine 
-                            ? 'bg-emerald-600/90 hover:bg-emerald-600 border border-emerald-500/10 rounded-tr-none ml-auto text-slate-100' 
+                            ? 'bg-brand-gradient text-slate-100 rounded-tr-none ml-auto shadow-brand border-none' 
                             : 'bg-slate-800 hover:bg-slate-750 border border-slate-750/30 rounded-tl-none mr-auto text-slate-200'
                         }`}
                       >
@@ -810,7 +810,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
                             <div>
                               <p className="text-[14px] leading-relaxed break-words whitespace-pre-wrap">{displayText}</p>
                               {isTranslated && (
-                                <div className="flex items-center gap-1 mt-1 select-none text-[9px] text-emerald-400 font-medium opacity-85">
+                                <div className="flex items-center gap-1 mt-1 select-none text-[9px] text-cyan-400 font-medium opacity-85">
                                   <span>Translated from {originalLang}</span>
                                   <span>•</span>
                                   <button 
@@ -819,7 +819,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
                                       e.stopPropagation();
                                       setShowOriginalMessages(prev => ({ ...prev, [msg._id]: true }));
                                     }}
-                                    className="underline hover:text-emerald-300 transition-colors cursor-pointer"
+                                    className="underline hover:text-cyan-300 transition-colors cursor-pointer"
                                   >
                                     View Original
                                   </button>
@@ -960,8 +960,8 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
       {(repliesLoading || smartReplies.length > 0 || repliesError) && (
         <div className="px-6 py-2.5 bg-slate-900/30 border-t border-slate-800/40 flex flex-wrap items-center gap-2 relative z-10 animate-fade-in">
           {repliesLoading && (
-            <span className="text-xxs text-slate-500 flex items-center gap-1.5 px-3 py-1 select-none">
-              <span className="animate-spin rounded-full h-3 w-3 border-2 border-slate-700 border-t-emerald-500"></span>
+            <span className="text-xxs text-slate-505 flex items-center gap-1.5 px-3 py-1 select-none">
+              <span className="animate-spin rounded-full h-3 w-3 border-2 border-slate-700 border-t-cyan-555"></span>
               Generating smart replies...
             </span>
           )}
@@ -980,7 +980,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
                   key={idx}
                   type="button"
                   onClick={() => handleSelectSmartReply(reply)}
-                  className="bg-slate-900 border border-slate-800 hover:border-emerald-500/40 hover:bg-emerald-950/20 text-slate-200 hover:text-emerald-400 font-medium text-xs px-3.5 py-1.5 rounded-full cursor-pointer transition-all duration-200 shadow-md transform hover:-translate-y-0.5 active:scale-98"
+                  className="bg-slate-900 border border-slate-800 hover:border-cyan-500/40 hover:bg-cyan-950/20 text-slate-200 hover:text-cyan-400 font-medium text-xs px-3.5 py-1.5 rounded-full cursor-pointer transition-all duration-200 shadow-md transform hover:-translate-y-0.5 active:scale-98"
                 >
                   {reply}
                 </button>
@@ -1017,7 +1017,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
               <X className="w-3.5 h-3.5" />
             </button>
             {file?.type.startsWith('video') ? (
-              <VideoIcon className="w-7 h-7 text-emerald-555" />
+              <VideoIcon className="w-7 h-7 text-cyan-400" />
             ) : (
               <img src={filePreview} alt="Preview" className="w-10 h-10 rounded-lg object-cover" />
             )}
@@ -1030,7 +1030,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
           onClick={handleImproveMessage}
           disabled={!inputText.trim()}
           title="Improve message with AI"
-          className="px-3.5 py-2.5 bg-slate-900/80 border border-slate-800 hover:border-emerald-500/40 text-xs font-semibold text-slate-200 hover:text-emerald-450 rounded-full cursor-pointer transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+          className="px-3.5 py-2.5 bg-slate-900/80 border border-slate-800 hover:border-cyan-500/40 text-xs font-semibold text-slate-200 hover:text-cyan-400 rounded-full cursor-pointer transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
         >
           ✨ AI Improve
         </button>
@@ -1040,13 +1040,13 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
           placeholder="Type a message..."
           value={inputText}
           onChange={handleInputChange}
-          className="flex-1 bg-slate-900 border border-slate-850 focus:border-emerald-500 rounded-full py-3 px-5 text-sm text-slate-100 placeholder-slate-550 outline-none transition-all"
+          className="flex-1 bg-slate-900 border border-slate-850 focus:border-cyan-500 rounded-full py-3 px-5 text-sm text-slate-100 placeholder-slate-550 outline-none transition-all"
         />
 
         <button 
           type="submit" 
           disabled={!inputText.trim() && !file}
-          className="w-11 h-11 rounded-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white flex items-center justify-center cursor-pointer transition-all disabled:bg-slate-800 disabled:text-slate-650 disabled:cursor-not-allowed"
+          className="w-11 h-11 rounded-full bg-brand-gradient bg-brand-gradient-hover active:scale-95 text-white flex items-center justify-center cursor-pointer transition-all disabled:bg-slate-800 disabled:text-slate-650 disabled:cursor-not-allowed"
         >
           <Send className="w-4 h-4 ml-0.5" />
         </button>
@@ -1084,10 +1084,9 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
       {/* AI Assistant Panel Drawer */}
       {showAiPanel && (
         <div className="absolute md:relative right-0 top-0 bottom-0 z-20 w-full md:w-96 border-l border-slate-800/80 bg-slate-900 h-full flex flex-col animate-slide-in shrink-0">
-          {/* Drawer Header */}
           <div className="h-16 border-b border-slate-800/80 px-4 flex items-center justify-between bg-slate-850">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-emerald-500 animate-pulse" />
+              <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
               <span className="font-semibold text-sm text-slate-100">AI Assistant</span>
             </div>
             <button 
@@ -1108,7 +1107,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
                       <img src={msg.filePreview} alt="Uploaded" className="w-full h-24 object-cover rounded" />
                     ) : (
                       <div className="p-2 flex items-center gap-1.5 text-[10px] text-slate-300">
-                        <Paperclip className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                        <Paperclip className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                         <span className="truncate max-w-[100px]">{msg.fileName}</span>
                       </div>
                     )}
@@ -1116,7 +1115,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
                 )}
                 <div className={`p-3 rounded-2xl text-xs leading-relaxed ${
                   msg.role === 'user' 
-                    ? 'bg-emerald-600 text-white rounded-tr-none' 
+                    ? 'bg-brand-gradient text-white rounded-tr-none shadow-brand' 
                     : 'bg-slate-800/85 text-slate-200 border border-slate-750 rounded-tl-none shadow-md'
                 }`}>
                   {msg.role === 'ai' ? formatAiResponse(msg.content) : msg.content}
@@ -1127,7 +1126,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
             {aiLoading && (
               <div className="self-start flex items-center gap-2 max-w-[85%]">
                 <div className="p-3 bg-slate-800/85 border border-slate-750 rounded-2xl rounded-tl-none flex items-center gap-1.5 text-xxs text-slate-400">
-                  <span className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-slate-750 border-t-emerald-500"></span>
+                  <span className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-slate-750 border-t-cyan-500"></span>
                   Thinking...
                 </div>
               </div>
@@ -1149,7 +1148,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
                 {aiFile?.type.startsWith('image/') ? (
                   <img src={aiFilePreview} alt="" className="w-8 h-8 rounded object-cover" />
                 ) : (
-                  <Paperclip className="w-4 h-4 text-emerald-500" />
+                  <Paperclip className="w-4 h-4 text-cyan-400" />
                 )}
                 <span className="text-[10px] text-slate-300 max-w-[100px] truncate">{aiFile?.name}</span>
               </div>
@@ -1171,12 +1170,12 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
                 value={aiInput}
                 onChange={(e) => setAiInput(e.target.value)}
                 placeholder="Ask AI anything..."
-                className="flex-1 bg-slate-900 border border-slate-800 focus:border-emerald-500 rounded-xl py-2.5 px-4 text-xs text-slate-150 placeholder-slate-500 outline-none transition-all"
+                className="flex-1 bg-slate-900 border border-slate-800 focus:border-cyan-500 rounded-xl py-2.5 px-4 text-xs text-slate-150 placeholder-slate-500 outline-none transition-all"
               />
               <button 
                 type="submit"
                 disabled={(!aiInput.trim() && !aiFile) || aiLoading}
-                className="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center cursor-pointer transition-all disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed shrink-0"
+                className="p-2.5 rounded-xl bg-brand-gradient bg-brand-gradient-hover text-white flex items-center justify-center cursor-pointer transition-all disabled:bg-slate-800 disabled:text-slate-655 disabled:cursor-not-allowed shrink-0"
               >
                 <Send className="w-3.5 h-3.5" />
               </button>
@@ -1191,7 +1190,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
           <div className="bg-slate-900 border border-slate-800/80 max-w-md w-full rounded-2xl p-6 shadow-2xl flex flex-col gap-5 max-h-[85vh] overflow-y-auto animate-scale-in">
             <div className="flex justify-between items-center border-b border-slate-800/60 pb-3">
               <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-emerald-500" />
+                <FileText className="w-5 h-5 text-cyan-400" />
                 <h3 className="text-base font-bold text-slate-100">Conversation Summary</h3>
               </div>
               <button 
@@ -1206,7 +1205,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
             <div className="flex-1 min-h-[160px] bg-slate-950/40 border border-slate-800/50 rounded-xl p-4 leading-relaxed text-sm text-slate-250 select-text">
               {summaryLoading && (
                 <div className="flex flex-col items-center justify-center gap-3 py-10">
-                  <span className="animate-spin rounded-full h-8 w-8 border-3 border-slate-700 border-t-emerald-500"></span>
+                  <span className="animate-spin rounded-full h-8 w-8 border-3 border-slate-700 border-t-cyan-500"></span>
                   <span className="text-xs text-slate-400 animate-pulse">Summarizing conversation...</span>
                 </div>
               )}
@@ -1237,7 +1236,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
               <button
                 onClick={() => handleSummarizeChat(true)}
                 disabled={summaryLoading}
-                className="px-4 py-2 bg-emerald-650 hover:bg-emerald-600 active:scale-97 disabled:bg-slate-800 disabled:text-slate-650 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-xl cursor-pointer transition-all"
+                className="px-4 py-2 bg-brand-gradient bg-brand-gradient-hover active:scale-97 disabled:bg-slate-800 disabled:text-slate-655 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-xl cursor-pointer transition-all shadow-brand"
               >
                 Regenerate
               </button>
@@ -1258,7 +1257,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
           <div className="bg-slate-900 border border-slate-800/80 max-w-lg w-full rounded-2xl p-6 shadow-2xl flex flex-col gap-5 max-h-[85vh] overflow-y-auto animate-scale-in">
             <div className="flex justify-between items-center border-b border-slate-800/60 pb-3">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-emerald-500 animate-pulse" />
+                <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
                 <h3 className="text-base font-bold text-slate-100">AI Conversation Coach</h3>
               </div>
               <button 
@@ -1273,7 +1272,7 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
             <div className="flex-1 overflow-y-auto flex flex-col gap-4 py-2">
               {coachLoading && (
                 <div className="flex flex-col items-center justify-center gap-3 py-14">
-                  <span className="animate-spin rounded-full h-8 w-8 border-3 border-slate-700 border-t-emerald-500"></span>
+                  <span className="animate-spin rounded-full h-8 w-8 border-3 border-slate-700 border-t-cyan-500"></span>
                   <span className="text-xs text-slate-400">Polishing your message...</span>
                 </div>
               )}
@@ -1290,36 +1289,36 @@ export default function ChatWindow({ activeConversation, onNewMessage, onBack })
                   <button
                     type="button"
                     onClick={() => handleSelectCoachSuggestion(coachSuggestions.friendly)}
-                    className="p-3.5 text-left bg-slate-950/30 border border-slate-800 hover:border-emerald-500/40 hover:bg-emerald-950/10 rounded-xl cursor-pointer transition-all duration-200 shadow-sm flex flex-col gap-1.5 hover:-translate-y-0.5 group active:scale-99"
+                    className="p-3.5 text-left bg-slate-950/30 border border-slate-800 hover:border-cyan-500/40 hover:bg-cyan-950/10 rounded-xl cursor-pointer transition-all duration-200 shadow-sm flex flex-col gap-1.5 hover:-translate-y-0.5 group active:scale-99"
                   >
-                    <span className="text-[10px] font-bold text-emerald-450 uppercase tracking-wider">😊 Friendly</span>
+                    <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider">😊 Friendly</span>
                     <p className="text-xs text-slate-300 leading-relaxed group-hover:text-slate-255">{coachSuggestions.friendly}</p>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleSelectCoachSuggestion(coachSuggestions.professional)}
-                    className="p-3.5 text-left bg-slate-950/30 border border-slate-800 hover:border-emerald-500/40 hover:bg-emerald-950/10 rounded-xl cursor-pointer transition-all duration-200 shadow-sm flex flex-col gap-1.5 hover:-translate-y-0.5 group active:scale-99"
+                    className="p-3.5 text-left bg-slate-950/30 border border-slate-800 hover:border-cyan-500/40 hover:bg-cyan-950/10 rounded-xl cursor-pointer transition-all duration-200 shadow-sm flex flex-col gap-1.5 hover:-translate-y-0.5 group active:scale-99"
                   >
-                    <span className="text-[10px] font-bold text-emerald-450 uppercase tracking-wider">💼 Professional</span>
+                    <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider">💼 Professional</span>
                     <p className="text-xs text-slate-300 leading-relaxed group-hover:text-slate-255">{coachSuggestions.professional}</p>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleSelectCoachSuggestion(coachSuggestions.funny)}
-                    className="p-3.5 text-left bg-slate-950/30 border border-slate-800 hover:border-emerald-500/40 hover:bg-emerald-950/10 rounded-xl cursor-pointer transition-all duration-200 shadow-sm flex flex-col gap-1.5 hover:-translate-y-0.5 group active:scale-99"
+                    className="p-3.5 text-left bg-slate-950/30 border border-slate-800 hover:border-cyan-500/40 hover:bg-cyan-950/10 rounded-xl cursor-pointer transition-all duration-200 shadow-sm flex flex-col gap-1.5 hover:-translate-y-0.5 group active:scale-99"
                   >
-                    <span className="text-[10px] font-bold text-emerald-450 uppercase tracking-wider">😂 Funny</span>
+                    <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider">😂 Funny</span>
                     <p className="text-xs text-slate-300 leading-relaxed group-hover:text-slate-255">{coachSuggestions.funny}</p>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleSelectCoachSuggestion(coachSuggestions.short)}
-                    className="p-3.5 text-left bg-slate-950/30 border border-slate-800 hover:border-emerald-500/40 hover:bg-emerald-950/10 rounded-xl cursor-pointer transition-all duration-200 shadow-sm flex flex-col gap-1.5 hover:-translate-y-0.5 group active:scale-99"
+                    className="p-3.5 text-left bg-slate-950/30 border border-slate-800 hover:border-cyan-500/40 hover:bg-cyan-950/10 rounded-xl cursor-pointer transition-all duration-200 shadow-sm flex flex-col gap-1.5 hover:-translate-y-0.5 group active:scale-99"
                   >
-                    <span className="text-[10px] font-bold text-emerald-450 uppercase tracking-wider">⚡ Short</span>
+                    <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider">⚡ Short</span>
                     <p className="text-xs text-slate-300 leading-relaxed group-hover:text-slate-255">{coachSuggestions.short}</p>
                   </button>
                 </div>

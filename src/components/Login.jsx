@@ -18,7 +18,7 @@ export default function Login() {
   const [preferredLanguage, setPreferredLanguage] = useState('English');
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
-  const [about, setAbout] = useState('Hey there! I am using WhatsApp.');
+  const [about, setAbout] = useState('Hey there! I am using smartTalk.');
   const [password, setPassword] = useState('');
   
   const [step, setStep] = useState(1); // 1: Send OTP, 2: Verify OTP
@@ -142,16 +142,16 @@ export default function Login() {
   return (
     <div className="flex justify-center items-center w-full min-h-screen bg-slate-950 p-4 relative overflow-hidden">
       {/* Dynamic Background Gradients */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-emerald-700/10 rounded-full blur-3xl" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-700/10 rounded-full blur-3xl" />
 
-      <div className="w-full max-w-md bg-slate-900/80 border border-slate-800/80 rounded-2xl p-8 backdrop-blur-md shadow-2xl flex flex-col gap-6 relative z-10">
+      <div className="w-full max-w-md bg-slate-900/85 border border-slate-800/80 rounded-2xl p-8 backdrop-blur-md shadow-brand flex flex-col gap-6 relative z-10">
         <div className="flex flex-col items-center text-center gap-2">
-          <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center border border-dashed border-emerald-500/30 mb-2">
-            <Smartphone className="w-8 h-8 text-emerald-500" />
-          </div>
-          <h2 className="text-2xl font-bold text-slate-100">WhatsApp Web</h2>
-          <p className="text-xs text-slate-400">Secure real-time end-to-end messaging</p>
+          <img src="/logo.jpg" alt="smartTalk Logo" className="w-24 h-24 rounded-2xl shadow-brand mb-2 object-cover border border-slate-850" />
+          <h2 className="text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-1">
+            smart<span className="text-brand-gradient">Talk</span>
+          </h2>
+          <p className="text-xs text-slate-400">Chat Smarter. Connect Better.</p>
         </div>
 
         {error && (
@@ -162,7 +162,7 @@ export default function Login() {
         )}
 
         {message && (
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 text-emerald-400 flex items-center gap-3 text-sm">
+          <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-3 text-cyan-400 flex items-center gap-3 text-sm">
             <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
             <span>{message}</span>
           </div>
@@ -205,7 +205,7 @@ export default function Login() {
                     value={phoneSuffix}
                     onChange={(e) => setPhoneSuffix(e.target.value)}
                     placeholder="+91"
-                    className="w-16 bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-3 px-2 text-center text-sm text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                    className="w-16 bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-3 px-2 text-center text-sm text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
                     required
                   />
                   <div className="relative flex-1 flex items-center">
@@ -216,7 +216,7 @@ export default function Login() {
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
                     />
                   </div>
                 </div>
@@ -225,10 +225,10 @@ export default function Login() {
               <button 
                 type="submit" 
                 disabled={loading} 
-                className="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-99 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer shadow-lg hover:shadow-emerald-600/10 transition-all flex items-center justify-center gap-2 disabled:bg-slate-800 disabled:text-slate-650 disabled:cursor-not-allowed"
+                className="w-full bg-brand-gradient bg-brand-gradient-hover active:scale-99 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer shadow-brand transition-all flex items-center justify-center gap-2 disabled:bg-slate-800 disabled:text-slate-650 disabled:cursor-not-allowed"
               >
                 {loading ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-emerald-500"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-cyan-500"></div>
                 ) : (
                   <>Send Verification Code <ArrowRight className="w-4 h-4" /></>
                 )}
@@ -252,7 +252,7 @@ export default function Login() {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-3 pl-11 pr-4 text-center text-lg font-bold tracking-widest text-slate-100 placeholder-slate-700 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                    className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-3 pl-11 pr-4 text-center text-lg font-bold tracking-widest text-slate-100 placeholder-slate-700 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
                   />
                 </div>
               </div>
@@ -269,10 +269,10 @@ export default function Login() {
                 <button 
                   type="submit" 
                   disabled={loading} 
-                  className="flex-1.5 bg-emerald-650 hover:bg-emerald-600 active:scale-99 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer shadow-lg hover:shadow-emerald-600/10 transition-all flex items-center justify-center gap-2 disabled:bg-slate-800"
+                  className="flex-1.5 bg-brand-gradient bg-brand-gradient-hover active:scale-99 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer shadow-brand transition-all flex items-center justify-center gap-2 disabled:bg-slate-800"
                 >
                   {loading ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-emerald-500"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-cyan-500"></div>
                   ) : (
                     'Verify & Continue'
                   )}
@@ -296,8 +296,8 @@ export default function Login() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
-                    />
+                    className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
+                  />
                   </div>
                 </div>
                 
@@ -312,7 +312,7 @@ export default function Login() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
                     />
                   </div>
                 </div>
@@ -331,7 +331,7 @@ export default function Login() {
                     )}
                     <label 
                       htmlFor="avatar-login-upload" 
-                      className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center cursor-pointer border border-slate-900 transition-colors shadow-lg"
+                      className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-brand-gradient bg-brand-gradient-hover flex items-center justify-center cursor-pointer border border-slate-900 transition-colors shadow-lg"
                     >
                       <Camera className="w-3.5 h-3.5 text-white" />
                       <input
@@ -357,7 +357,7 @@ export default function Login() {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
                     />
                   </div>
                 </div>
@@ -373,7 +373,7 @@ export default function Login() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
                     />
                   </div>
                 </div>
@@ -389,7 +389,7 @@ export default function Login() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
                     />
                   </div>
                 </div>
@@ -402,7 +402,7 @@ export default function Login() {
                     <select
                       value={preferredLanguage}
                       onChange={(e) => setPreferredLanguage(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 pl-11 pr-10 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 appearance-none cursor-pointer"
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-2.5 pl-11 pr-10 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20 appearance-none cursor-pointer"
                     >
                       {LANGUAGES.map(lang => (
                         <option key={lang} value={lang} className="bg-slate-900 text-slate-200">
@@ -422,10 +422,10 @@ export default function Login() {
                   <div className="relative flex items-center">
                     <input
                       type="text"
-                      placeholder="Hey there! I am using WhatsApp."
+                      placeholder="Hey there! I am using smartTalk."
                       value={about}
                       onChange={(e) => setAbout(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-2.5 px-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-2.5 px-4 text-xs text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
                     />
                   </div>
                 </div>
@@ -435,10 +435,10 @@ export default function Login() {
             <button 
               type="submit" 
               disabled={loading} 
-              className="w-full bg-emerald-650 hover:bg-emerald-600 active:scale-99 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer shadow-lg hover:shadow-emerald-600/10 transition-all flex items-center justify-center gap-2 disabled:bg-slate-800 disabled:text-slate-650"
+              className="w-full bg-brand-gradient bg-brand-gradient-hover active:scale-99 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer shadow-brand transition-all flex items-center justify-center gap-2 disabled:bg-slate-800 disabled:text-slate-650"
             >
               {loading ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-emerald-500"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-cyan-500"></div>
               ) : (
                 <>
                   {isManualLogin ? 'Login / Access Account' : 'Create Account / Register'} 
@@ -456,7 +456,7 @@ export default function Login() {
                   setError('');
                   setMessage('');
                 }}
-                className="text-xs text-emerald-555 hover:text-emerald-450 font-semibold underline cursor-pointer transition-colors"
+                className="text-xs text-cyan-400 hover:text-purple-400 font-semibold underline cursor-pointer transition-colors"
               >
                 {isManualLogin ? "New user? Create an account instead" : "Already have an account? Log in directly"}
               </button>

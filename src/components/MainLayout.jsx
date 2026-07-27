@@ -64,9 +64,9 @@ export default function MainLayout({
           <div className="h-16 bg-slate-800/50 px-4 flex items-center justify-between border-b border-slate-800/80">
             <div className="flex items-center gap-3 cursor-pointer group" onClick={onEditProfile}>
               {currentUser.profilePicture ? (
-                <img src={currentUser.profilePicture} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-transparent group-hover:border-emerald-500 transition-all" />
+                <img src={currentUser.profilePicture} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-transparent group-hover:border-cyan-500 transition-all" />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-slate-800 text-emerald-550 font-bold flex items-center justify-center border-2 border-transparent group-hover:border-emerald-500 transition-all">
+                <div className="w-10 h-10 rounded-full bg-slate-800 text-cyan-400 font-bold flex items-center justify-center border-2 border-transparent group-hover:border-cyan-500 transition-all">
                   {currentUser.username?.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -74,13 +74,13 @@ export default function MainLayout({
             </div>
             
             <div className="flex gap-1.5">
-              <button onClick={onOpenCreateGroup} title="Create Group Chat" className="p-2 text-slate-400 hover:text-emerald-500 hover:bg-slate-800 rounded-full transition-all cursor-pointer">
+              <button onClick={onOpenCreateGroup} title="Create Group Chat" className="p-2 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded-full transition-all cursor-pointer">
                 <Users className="w-5 h-5" />
               </button>
-              <button onClick={onOpenStatus} title="View Stories" className="p-2 text-slate-400 hover:text-emerald-500 hover:bg-slate-800 rounded-full transition-all cursor-pointer">
+              <button onClick={onOpenStatus} title="View Stories" className="p-2 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded-full transition-all cursor-pointer">
                 <CircleDot className="w-5 h-5" />
               </button>
-              <button onClick={onEditProfile} title="Profile Settings" className="p-2 text-slate-400 hover:text-emerald-500 hover:bg-slate-800 rounded-full transition-all cursor-pointer">
+              <button onClick={onEditProfile} title="Profile Settings" className="p-2 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded-full transition-all cursor-pointer">
                 <Edit2 className="w-4 h-4" />
               </button>
               <button onClick={onLogout} title="Log Out" className="p-2 text-slate-400 hover:text-red-500 hover:bg-slate-800 rounded-full transition-all cursor-pointer">
@@ -132,19 +132,19 @@ export default function MainLayout({
                           c.groupAvatar ? (
                             <img src={c.groupAvatar} alt="" className="w-12 h-12 rounded-full object-cover border border-slate-800" />
                           ) : (
-                            <div className="w-12 h-12 rounded-full bg-slate-800 text-emerald-500 font-bold text-lg flex items-center justify-center border border-slate-800">
-                              <Users className="w-5 h-5 text-emerald-550" />
+                            <div className="w-12 h-12 rounded-full bg-slate-800 text-cyan-400 font-bold text-lg flex items-center justify-center border border-slate-800">
+                              <Users className="w-5 h-5 text-cyan-400" />
                             </div>
                           )
                         ) : receiver?.profilePicture ? (
                           <img src={receiver.profilePicture} alt="" className="w-12 h-12 rounded-full object-cover" />
                         ) : (
-                          <div className="w-12 h-12 rounded-full bg-slate-800 text-emerald-550 font-bold text-lg flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-full bg-slate-800 text-cyan-400 font-bold text-lg flex items-center justify-center">
                             {receiver?.username?.charAt(0).toUpperCase() || 'U'}
                           </div>
                         )}
                         {!c.isGroup && receiver?.isOnline && (
-                          <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-slate-900" />
+                          <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-cyan-500 border-2 border-slate-900" />
                         )}
                       </div>
 
@@ -166,7 +166,7 @@ export default function MainLayout({
                             )}
                           </span>
                           {c.unreadCount > 0 && !isChatActive && (
-                            <span className="bg-emerald-500 text-white text-xxs font-bold min-w-5 h-5 px-1.5 rounded-full flex items-center justify-center">
+                            <span className="bg-brand-gradient text-white text-xxs font-bold min-w-5 h-5 px-1.5 rounded-full flex items-center justify-center shadow-brand">
                               {c.unreadCount}
                             </span>
                           )}
@@ -179,7 +179,7 @@ export default function MainLayout({
                 {/* Directory Search Results */}
                 {searchInDirectory.length > 0 && (
                   <>
-                    <div className="text-xxs font-bold text-emerald-500 px-4 pt-4 pb-1 uppercase tracking-wider border-t border-slate-800/20">
+                    <div className="text-xxs font-bold text-cyan-400 px-4 pt-4 pb-1 uppercase tracking-wider border-t border-slate-800/20">
                       Registered Users
                     </div>
                     {searchInDirectory.map(u => (
@@ -195,12 +195,12 @@ export default function MainLayout({
                           {u.profilePicture ? (
                             <img src={u.profilePicture} alt="" className="w-12 h-12 rounded-full object-cover" />
                           ) : (
-                            <div className="w-12 h-12 rounded-full bg-slate-800 text-emerald-500 font-bold text-lg flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-full bg-slate-800 text-cyan-400 font-bold text-lg flex items-center justify-center">
                               {u.username?.charAt(0).toUpperCase()}
                             </div>
                           )}
                           {u.isOnline && (
-                            <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-slate-900" />
+                            <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-cyan-500 border-2 border-slate-900" />
                           )}
                         </div>
                         
@@ -233,12 +233,12 @@ export default function MainLayout({
               {/* Decorative radial overlay */}
               <div className="absolute inset-0 bg-radial-gradient(circle, transparent 20%, #090d10 90%) pointer-events-none" />
               <div className="flex flex-col items-center text-center gap-4 max-w-md p-8 z-10 animate-fade-in">
-                <div className="w-28 h-28 rounded-full bg-emerald-500/5 flex items-center justify-center border border-emerald-500/10 mb-2">
-                  <Sparkles className="w-14 h-14 text-emerald-500" />
-                </div>
-                <h1 className="text-3xl font-extrabold tracking-tight text-slate-100">WhatsApp Web</h1>
+                <img src="/logo.jpg" alt="smartTalk Logo" className="w-32 h-32 rounded-2xl shadow-brand mb-2 object-cover border border-slate-800" />
+                <h1 className="text-3xl font-extrabold tracking-tight text-slate-100 flex items-center gap-1">
+                  smart<span className="text-brand-gradient">Talk</span>
+                </h1>
                 <p className="text-sm text-slate-400 leading-relaxed">
-                  Send and receive messages in real time. Keep your phone connected to check new updates.
+                  Send and receive messages in real time. Experience AI-powered translations, summaries, and smart replies directly in your chats.
                 </p>
                 <div className="absolute bottom-10 flex items-center gap-1.5 text-xs text-slate-500">
                   <Shield className="w-3.5 h-3.5" />

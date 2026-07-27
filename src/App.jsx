@@ -241,7 +241,7 @@ export default function App() {
   if (isAuthChecking) {
     return (
       <div className="flex flex-col justify-center items-center w-screen h-screen bg-slate-950">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-800 border-t-emerald-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-800 border-t-cyan-500"></div>
         <p className="mt-4 text-slate-400 text-sm">Connecting securely to server...</p>
       </div>
     );

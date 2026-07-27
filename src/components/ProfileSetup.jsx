@@ -32,7 +32,7 @@ export default function ProfileSetup({ onCancel }) {
     }
   };
   const [username, setUsername] = useState(currentUser.username || '');
-  const [about, setAbout] = useState(currentUser.about || 'Hey there! I am using WhatsApp.');
+  const [about, setAbout] = useState(currentUser.about || 'Hey there! I am using smartTalk.');
   const [profilePicture, setProfilePicture] = useState(currentUser.profilePicture || '');
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(currentUser.profilePicture || '');
@@ -108,8 +108,8 @@ export default function ProfileSetup({ onCancel }) {
   return (
     <div className="flex justify-center items-center w-full min-h-screen bg-slate-950 p-4 relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-emerald-700/10 rounded-full blur-3xl" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-700/10 rounded-full blur-3xl" />
 
       <div className="w-full max-w-md bg-slate-900/80 border border-slate-800/80 rounded-2xl p-8 backdrop-blur-md shadow-2xl flex flex-col gap-6 relative z-10 animate-fade-in">
         <div className="flex flex-col items-center text-center gap-2">
@@ -136,7 +136,7 @@ export default function ProfileSetup({ onCancel }) {
               )}
               <label 
                 htmlFor="avatar-upload" 
-                className="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center cursor-pointer border-2 border-slate-900 transition-colors shadow-lg"
+                className="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-brand-gradient bg-brand-gradient-hover flex items-center justify-center cursor-pointer border-2 border-slate-900 transition-colors shadow-lg"
               >
                 <Camera className="w-4 h-4 text-white" />
                 <input
@@ -162,7 +162,7 @@ export default function ProfileSetup({ onCancel }) {
                 onChange={(e) => setUsername(e.target.value)}
                 maxLength={25}
                 required
-                className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-100 placeholder-slate-600 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-100 placeholder-slate-600 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
               />
             </div>
           </div>
@@ -173,11 +173,11 @@ export default function ProfileSetup({ onCancel }) {
               <FileText className="absolute left-3.5 text-slate-500 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Hey there! I am using WhatsApp."
+                placeholder="Hey there! I am using smartTalk."
                 value={about}
                 onChange={(e) => setAbout(e.target.value)}
                 maxLength={100}
-                className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-100 placeholder-slate-600 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+                className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-100 placeholder-slate-600 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
               />
             </div>
           </div>
@@ -189,7 +189,7 @@ export default function ProfileSetup({ onCancel }) {
               <select
                 value={preferredLanguage}
                 onChange={(e) => setPreferredLanguage(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl py-3 pl-11 pr-10 text-sm text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 appearance-none cursor-pointer"
+                className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-3 pl-11 pr-10 text-sm text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20 appearance-none cursor-pointer"
               >
                 {LANGUAGES.map(lang => (
                   <option key={lang} value={lang} className="bg-slate-900 text-slate-200">
@@ -217,10 +217,10 @@ export default function ProfileSetup({ onCancel }) {
             <button 
               type="submit" 
               disabled={loading} 
-              className="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-99 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer shadow-lg hover:shadow-emerald-600/10 transition-all flex items-center justify-center gap-2 disabled:bg-slate-800 disabled:cursor-not-allowed"
+              className="flex-1 bg-brand-gradient bg-brand-gradient-hover active:scale-99 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer shadow-brand transition-all flex items-center justify-center gap-2 disabled:bg-slate-800 disabled:cursor-not-allowed"
             >
               {loading ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-emerald-500"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-cyan-500"></div>
               ) : (
                 <>Save Profile <Check className="w-4 h-4" /></>
               )}
