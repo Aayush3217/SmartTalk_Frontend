@@ -10,7 +10,7 @@ import StatusArea from './components/StatusArea';
 import CreateGroupModal from './components/CreateGroupModal';
 import { useUserStore } from './store/useUserStore';
 
-const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/\/$/, '');
+const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/[/\\]+$/, '');
 const API_BASE = `${BACKEND_URL}/api`;
 const SOCKET_BASE = BACKEND_URL;
 

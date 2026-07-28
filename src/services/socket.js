@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const SOCKET_BASE = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/\/$/, '');
+const SOCKET_BASE = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/[/\\]+$/, '');
 
 class SocketService {
   socket = null;

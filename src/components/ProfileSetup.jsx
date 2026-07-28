@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Camera, User, FileText, Check, AlertCircle, ChevronDown, Globe } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
 
-const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/\/$/, '');
+const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/[/\\]+$/, '');
 const API_BASE = `${BACKEND_URL}/api`;
 
 export default function ProfileSetup({ onCancel }) {

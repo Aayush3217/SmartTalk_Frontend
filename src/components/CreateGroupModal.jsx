@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { X, Camera, User, Users, Check, AlertCircle } from 'lucide-react';
 
-const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/\/$/, '');
+const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/[/\\]+$/, '');
 const API_BASE = `${BACKEND_URL}/api`;
 
 export default function CreateGroupModal({ isOpen, onClose, users, currentUser, onGroupCreated }) {

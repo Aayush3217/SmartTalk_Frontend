@@ -2,26 +2,25 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Mail, Phone, Lock, ArrowRight, Smartphone, AlertCircle, CheckCircle2, User, Camera, Globe, ChevronDown } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, provider } from '../utils/firebase';
 
-const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/\/$/, '');
+const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/[/\\]+$/, '');
 const API_BASE = `${BACKEND_URL}/api`;
 
 export default function Login() {
   const setCurrentUser = useUserStore((state) => state.setCurrentUser);
-  const [method, setMethod] = useState('phone'); // 'phone' | 'manual'
+  const [method, setMethod] = useState('google'); // 'google' | 'manual'
   const [isManualLogin, setIsManualLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [phoneSuffix, setPhoneSuffix] = useState('+91');
-  const [otp, setOtp] = useState('');
   const [preferredLanguage, setPreferredLanguage] = useState('English');
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [about, setAbout] = useState('Hey there! I am using smartTalk.');
   const [password, setPassword] = useState('');
   
-  const [step, setStep] = useState(1); // 1: Send OTP, 2: Verify OTP
+  const [step, setStep] = useState(1); // 1: Send OTP, 2: Verify OTP (unused but kept for reference/compilation safety if needed, can be cleaned)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -47,37 +46,21 @@ export default function Login() {
     }
   };
 
-  const handleSendOtp = async (e) => {
-    e.preventDefault();
+  const handleGoogleSignIn = async () => {
     setLoading(true);
     setError('');
     setMessage('');
     
     try {
-      const payload = { phoneNumber, phoneSuffix };
-      const response = await axios.post(`${API_BASE}/auth/send-otp`, payload);
-      setMessage(response.data.message || 'OTP sent successfully!');
-      setStep(2);
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || 'Failed to send OTP. Please check your inputs.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    
-    try {
-      const payload = { phoneNumber, phoneSuffix, otp };
-      const response = await axios.post(`${API_BASE}/auth/verify-otp`, payload, {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+      
+      const response = await axios.post(`${API_BASE}/auth/google-login`, { idToken }, {
         withCredentials: true
       });
       
-      setMessage('OTP verified! Redirecting...');
+      setMessage('Google Login success! Redirecting...');
       
       if (response.data.data?.token) {
         localStorage.setItem('auth_token', response.data.data.token);
@@ -88,7 +71,7 @@ export default function Login() {
       }, 800);
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || 'Invalid or expired OTP.');
+      setError(err.response?.data?.message || err.message || 'Google Sign-In failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -173,13 +156,19 @@ export default function Login() {
           <button
             type="button"
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              method === 'phone' 
+              method === 'google' 
                 ? 'bg-slate-800 text-slate-100 shadow-sm' 
                 : 'text-slate-400 hover:text-slate-200'
             }`}
-            onClick={() => { setMethod('phone'); setStep(1); setError(''); setMessage(''); }}
+            onClick={() => { setMethod('google'); setError(''); setMessage(''); }}
           >
-            <Phone className="w-4 h-4" /> Phone Login
+            <svg className="w-4 h-4" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            Google Sign-In
           </button>
           <button
             type="button"
@@ -194,92 +183,44 @@ export default function Login() {
           </button>
         </div>
 
-        {method === 'phone' ? (
-          step === 1 ? (
-            <form onSubmit={handleSendOtp} className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
-                <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Phone Number</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={phoneSuffix}
-                    onChange={(e) => setPhoneSuffix(e.target.value)}
-                    placeholder="+91"
-                    className="w-16 bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-3 px-2 text-center text-sm text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
-                    required
-                  />
-                  <div className="relative flex-1 flex items-center">
-                    <Phone className="absolute left-3.5 text-slate-500 w-5 h-5" />
-                    <input
-                      type="tel"
-                      placeholder="9876543210"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      required
-                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-100 placeholder-slate-650 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <button 
-                type="submit" 
-                disabled={loading} 
-                className="w-full bg-brand-gradient bg-brand-gradient-hover active:scale-99 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer shadow-brand transition-all flex items-center justify-center gap-2 disabled:bg-slate-800 disabled:text-slate-650 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-cyan-500"></div>
-                ) : (
-                  <>Send Verification Code <ArrowRight className="w-4 h-4" /></>
-                )}
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleVerifyOtp} className="flex flex-col gap-5">
-              <p className="text-sm text-slate-400 text-center leading-relaxed">
-                We sent a verification code to{' '}
-                <strong className="text-slate-100">{phoneSuffix} {phoneNumber}</strong>
+        {method === 'google' ? (
+          <div className="flex flex-col items-center justify-center py-6 text-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-slate-950 border border-slate-800 flex items-center justify-center shadow-inner">
+              <svg className="w-8 h-8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+            </div>
+            <div className="flex flex-col gap-1">
+              <h3 className="text-base font-bold text-slate-200">Sign in with Google</h3>
+              <p className="text-xs text-slate-400 max-w-[280px]">
+                Use your Google Account to instantly login or register to smartTalk.
               </p>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Enter 6-Digit OTP</label>
-                <div className="relative flex items-center">
-                  <Lock className="absolute left-3.5 text-slate-500 w-5 h-5" />
-                  <input
-                    type="text"
-                    maxLength={6}
-                    placeholder="000000"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    required
-                    className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-xl py-3 pl-11 pr-4 text-center text-lg font-bold tracking-widest text-slate-100 placeholder-slate-700 outline-none transition-all focus:ring-2 focus:ring-cyan-500/20"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setStep(1)}
-                  disabled={loading}
-                  className="flex-1 bg-transparent hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-450 hover:text-slate-200 py-3 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 cursor-pointer"
-                >
-                  Change Details
-                </button>
-                <button 
-                  type="submit" 
-                  disabled={loading} 
-                  className="flex-1.5 bg-brand-gradient bg-brand-gradient-hover active:scale-99 text-white py-3 rounded-xl text-sm font-semibold cursor-pointer shadow-brand transition-all flex items-center justify-center gap-2 disabled:bg-slate-800"
-                >
-                  {loading ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-cyan-500"></div>
-                  ) : (
-                    'Verify & Continue'
-                  )}
-                </button>
-              </div>
-            </form>
-          )
+            </div>
+            
+            <button 
+              type="button" 
+              onClick={handleGoogleSignIn}
+              disabled={loading} 
+              className="w-full mt-2 bg-slate-950 border border-slate-800 hover:border-slate-700 hover:bg-slate-900 text-slate-300 hover:text-slate-100 py-3 rounded-xl text-sm font-semibold cursor-pointer transition-all flex items-center justify-center gap-3 shadow-inner active:scale-99 disabled:bg-slate-800 disabled:text-slate-600"
+            >
+              {loading ? (
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-600 border-t-cyan-500"></div>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                  </svg>
+                  <span>Continue with Google</span>
+                </>
+              )}
+            </button>
+          </div>
         ) : (
           /* Manual Sign Up and Login Direct Flow */
           <form onSubmit={handleManualSubmit} className="flex flex-col gap-5">

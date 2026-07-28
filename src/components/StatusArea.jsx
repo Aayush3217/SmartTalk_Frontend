@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Camera, FileText, X, ChevronLeft, ChevronRight, Eye, Trash2, Send } from 'lucide-react';
 import socketService from '../services/socket';
 
-const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/\/$/, '');
+const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000').replace(/[/\\]+$/, '');
 const API_BASE = `${BACKEND_URL}/api`;
 
 import { useUserStore } from '../store/useUserStore';

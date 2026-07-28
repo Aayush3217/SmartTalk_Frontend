@@ -17,7 +17,8 @@
     "react-dom": "^19.2.7",
     "socket.io-client": "^4.8.3",
     "tailwindcss": "^4.3.2",
-    "zustand": "^5.0.14"
+    "zustand": "^5.0.14",
+    "firebase": "^11.2.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",
